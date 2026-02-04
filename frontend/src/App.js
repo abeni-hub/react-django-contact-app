@@ -88,52 +88,54 @@ function startEditContact(contact) {
 
 
   return (
-    <div>
-      <h1>Contact List App</h1>
-      <p>Total contacts: {contacts.length}</p>
-      <h2>Add Contact</h2>
+    <div className="min-h-screen bg-red-100 flex items-center justify-center">
+      <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-md">
+        <h1>Contact List App</h1>
+        <p>Total contacts: {contacts.length}</p>
+        <h2>Add Contact</h2>
 
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <br />
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <br />
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <br />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <br />
 
-      <input
-        type="text"
-        placeholder="Phone"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-      />
-      <br />
+        <input
+          type="text"
+          placeholder="Phone"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <br />
 
-      <button onClick={handleAddContact}>
-  {editingContactId ? "Update Contact" : "Add Contact"}
-</button>
+        <button onClick={handleAddContact}>
+          {editingContactId ? "Update Contact" : "Add Contact"}
+        </button>
 
-      <ul></ul>
-      {contacts.map((contact) => (
-        <li key={contact.id}>
-          <strong>{contact.name}</strong>
-          <br />
-          {contact.email} <br />
-          {contact.phone}
-          <button onClick={() => startEditContact(contact)}>Edit</button>
-          <button onClick={() => handleDeleteContact(contact.id)}>
-            Delete
-          </button>
-        </li>
-      ))}
+        <ul></ul>
+        {contacts.map((contact) => (
+          <li key={contact.id}>
+            <strong>{contact.name}</strong>
+            <br />
+            {contact.email} <br />
+            {contact.phone}
+            <button onClick={() => startEditContact(contact)}>Edit</button>
+            <button onClick={() => handleDeleteContact(contact.id)}>
+              Delete
+            </button>
+          </li>
+        ))}
+      </div>
     </div>
   );
 }
