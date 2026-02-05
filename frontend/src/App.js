@@ -126,9 +126,11 @@ function startEditContact(contact) {
           {editingContactId ? "Update Contact" : "Add Contact"}
         </button>
 
-        <ul></ul>
+        <ul className="space-y-4"></ul>
         {contacts.map((contact) => (
-          <li key={contact.id}>
+          <li key={contact.id}
+            className="border rounded-lg p-4 shadow-sm"
+>
             <strong>{contact.name}</strong>
             <br />
             {contact.email} <br />
