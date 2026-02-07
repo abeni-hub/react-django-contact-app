@@ -1,0 +1,1 @@
+git push -f React-Django-Projects main
