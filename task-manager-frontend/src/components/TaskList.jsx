@@ -1,4 +1,4 @@
-function TaskList({ tasks }) {
+function TaskList({ tasks = [] }) {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-2">Tasks</h2>
