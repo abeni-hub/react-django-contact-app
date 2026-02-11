@@ -1,16 +1,20 @@
 const BASE_URL = "http://127.0.0.1:8000/api";
 
+// GET Categories
 export async function fetchCategories() {
-  const res = await fetch(`${BASE_URL}/categories/`);
-  return res.json();
-}
-export async function fetchTasks() {
-  const response = await fetch("http://127.0.0.1:8000/api/tasks/");
+  const response = await fetch(`${BASE_URL}/categories/`);
   return response.json();
 }
 
+// GET Tasks
+export async function fetchTasks() {
+  const response = await fetch(`${BASE_URL}/tasks/`);
+  return response.json();
+}
+
+// POST Task
 export async function createTask(task) {
-  const response = await fetch("http://127.0.0.1:8000/api/tasks/", {
+  const response = await fetch(`${BASE_URL}/tasks/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -20,4 +24,3 @@ export async function createTask(task) {
 
   return response.json();
 }
-
