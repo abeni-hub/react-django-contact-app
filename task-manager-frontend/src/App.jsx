@@ -1,108 +1,188 @@
 import { useEffect, useState } from "react";
-import { Plus, Filter, Layout } from "lucide-react";
-import { fetchCategories, fetchTasks, createTask, deleteTask, updateTask } from "./services/api";
-import TaskList from "./components/TaskList";
-import CategoryList from "./components/CategoryList";
+import {
+  fetchCategories,
+  fetchTasks,
+  createTask,
+  deleteTask,
+  updateTask,
+} from "./services/api";
 
 function App() {
   const [categories, setCategories] = useState([]);
   const [tasks, setTasks] = useState([]);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
 
   useEffect(() => {
-    // Initial data fetch
-    fetchCategories().then(data => setCategories(data || []));
-    fetchTasks().then(data => setTasks(data || []));
+    fetchCategories().then(setCategories);
+    fetchTasks().then(setTasks);
   }, []);
 
-  const handleCreateTask = () => {
+  function handleCreateTask() {
     if (!title || !selectedCategory) return;
-    const newTaskData = { title, description, status: "pending", category: selectedCategory };
+
+    const newTaskData = {
+      title,
+      description,
+      status: "pending",
+      category: selectedCategory,
+    };
+
     createTask(newTaskData).then((newTask) => {
-      setTasks(prev => [...prev, newTask]);
-      setTitle(""); setDescription(""); setSelectedCategory("");
+      setTasks([...tasks, newTask]);
+      setTitle("");
+      setDescription("");
+      setSelectedCategory("");
     });
-  };
+  }
 
-  const handleStatusChange = (task) => {
-    const nextStatus = task.status === "pending" ? "in_progress" : task.status === "in_progress" ? "completed" : "pending";
-    updateTask(task.id, { status: nextStatus }).then((updated) => {
-      setTasks(prev => prev.map((t) => (t.id === task.id ? updated : t)));
+  function handleDeleteTask(id) {
+    deleteTask(id).then(() => {
+      setTasks(tasks.filter((task) => task.id !== id));
     });
-  };
+  }
 
-  const filteredTasks = filterCategory === ""
-    ? tasks
-    : tasks.filter((t) => String(t.category) === filterCategory);
+  function handleStatusChange(task) {
+    const nextStatus =
+      task.status === "pending"
+        ? "in_progress"
+        : task.status === "in_progress"
+        ? "completed"
+        : "pending";
+
+    updateTask(task.id, { status: nextStatus }).then((updatedTask) => {
+      setTasks(tasks.map((t) => (t.id === task.id ? updatedTask : t)));
+    });
+  }
+
+  const filteredTasks =
+    filterCategory === ""
+      ? tasks
+      : tasks.filter(
+          (task) => String(task.category) === filterCategory
+        );
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-12 font-sans">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
-          <div>
-            <h1 className="text-4xl font-black text-slate-900 flex items-center gap-2">
-              <Layout className="text-indigo-600" /> Workspace
-            </h1>
-          </div>
-          <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200">
-            <Filter size={18} className="text-slate-400" />
-            <select
-              className="bg-transparent outline-none text-sm font-bold text-slate-600 cursor-pointer"
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-            >
-              <option value="">All Categories</option>
-              {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-            </select>
-          </div>
-        </header>
+    <div className="min-h-screen bg-gray-100 p-8 flex justify-center">
+      <div className="w-full max-w-4xl bg-white shadow-xl rounded-2xl p-8">
 
-        <div className="grid lg:grid-cols-12 gap-8">
-          <aside className="lg:col-span-4 space-y-6">
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
-              <h2 className="text-lg font-bold mb-5 flex items-center gap-2 text-slate-800">
-                <Plus size={20} className="text-indigo-600" /> New Task
-              </h2>
-              <div className="space-y-4">
-                <input
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm outline-none"
-                  placeholder="Task title"
-                  value={title} onChange={e => setTitle(e.target.value)}
-                />
-                <textarea
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm outline-none resize-none"
-                  placeholder="Details..."
-                  value={description} onChange={e => setDescription(e.target.value)}
-                />
-                <select
-                  className="w-full px-4 py-3 rounded-xl bg-slate-50 border-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm outline-none"
-                  value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}
-                >
-                  <option value="">Assign Category</option>
-                  {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
-                </select>
-                <button
-                  onClick={handleCreateTask}
-                  className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95"
-                >
-                  Add Task
-                </button>
-              </div>
-            </div>
-            <CategoryList categories={categories} />
-          </aside>
+        {/* Header */}
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+          Workspace
+        </h1>
 
-          <main className="lg:col-span-8">
-            <TaskList
-              tasks={filteredTasks}
-              onDelete={(id) => deleteTask(id).then(() => setTasks(tasks.filter(t => t.id !== id)))}
-              onStatusChange={handleStatusChange}
-            />
-          </main>
+        {/* Create Task */}
+        <div className="grid md:grid-cols-4 gap-4 mb-6">
+          <input
+            type="text"
+            placeholder="Task title"
+            className="border p-2 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+
+          <input
+            type="text"
+            placeholder="Details"
+            className="border p-2 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+
+          <select
+            className="border p-2 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="">Assign Category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+
+          <button
+            onClick={handleCreateTask}
+            className="bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          >
+            Add Task
+          </button>
         </div>
+
+        {/* Filter */}
+        <div className="mb-6">
+          <select
+            className="border p-2 rounded-md focus:ring-2 focus:ring-green-500 outline-none"
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+          >
+            <option value="">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Task List */}
+        <div className="space-y-4">
+          {filteredTasks.length === 0 ? (
+            <p className="text-center text-gray-500">
+              No tasks available
+            </p>
+          ) : (
+            filteredTasks.map((task) => (
+              <div
+                key={task.id}
+                className="border rounded-xl p-4 shadow-sm flex justify-between items-center"
+              >
+                <div>
+                  <h3 className="font-semibold text-lg">
+                    {task.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    {task.description}
+                  </p>
+
+                  <span
+                    className={`mt-2 inline-block text-xs px-2 py-1 rounded-full
+                      ${
+                        task.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : task.status === "in_progress"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                  >
+                    {task.status}
+                  </span>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleStatusChange(task)}
+                    className="bg-indigo-500 text-white px-3 py-1 rounded-md hover:bg-indigo-600 transition"
+                  >
+                    Change
+                  </button>
+
+                  <button
+                    onClick={() => handleDeleteTask(task.id)}
+                    className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
       </div>
     </div>
   );
